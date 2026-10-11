@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Submarine — On-Demand Subtitle Streaming &amp; Format Converter</title>
+</head>
+<body>
+    <div id="SubmarineConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
+        <div data-role="content">
+            <div class="content-primary">
+                <div class="verticalSection">
+                    <div class="sectionTitleContainer flex align-items-center">
+                        <h2 class="sectionTitle">🌊 Submarine — Plex-Style On-Demand Subtitles</h2>
+                    </div>
+                    <p class="fieldDescription">
+                        Submarine brings Plex-style on-demand subtitle discovery, virtual subtitle streams for every Jellyfin app (Roku, Android TV, Apple TV / Swiftfin, Fire TV, Kodi, Web, Desktop), and real-time multi-format subtitle conversion (<code>SRT</code>, <code>VTT</code>, <code>ASS</code>, <code>SSA</code>, <code>SUB</code>, <code>TTML</code>).
+                    </p>
+                </div>
+
+                <form id="SubmarineConfigForm">
+                    <div class="verticalSection">
+                        <h3 class="sectionTitle">Universal Client &amp; Web Player Integration</h3>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input id="EnableUniversalVirtualStreams" name="EnableUniversalVirtualStreams" type="checkbox" is="emby-checkbox" />
+                                <span>Enable Universal Virtual Subtitle Streams (Roku, Android TV, Swiftfin, Kodi, Web)</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Injects on-demand remote subtitle candidates directly into Jellyfin's <code>PlaybackInfo</code> and <code>ItemDetails</code> responses so native TV and mobile clients can select and stream remote subtitles without a custom UI plugin.
+                            </div>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input id="EnableWebPlayerModal" name="EnableWebPlayerModal" type="checkbox" is="emby-checkbox" />
+                                <span>Enable Plex-Style In-Player Subtitle Search Modal (Web, Desktop JMP, Mobile)</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Automatically injects the interactive Submarine search &amp; live sync modal into the Jellyfin Web video player OSD and subtitle menu.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <h3 class="sectionTitle">Languages, Formats &amp; Provider Options</h3>
+
+                        <div class="inputContainer">
+                            <input is="emby-input" type="text" id="PreferredLanguages" name="PreferredLanguages" label="Preferred Subtitle Languages (ISO 639-2 comma-separated)" />
+                            <div class="fieldDescription">
+                                Example: <code>eng,spa,fre,ger,jpn</code>. Virtual subtitle streams will be queried for these languages when playback starts.
+                            </div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <input is="emby-input" type="number" id="MaxVirtualStreamsPerLanguage" name="MaxVirtualStreamsPerLanguage" min="1" max="15" label="Max Virtual Subtitle Streams Per Language" />
+                            <div class="fieldDescription">
+                                Maximum number of remote subtitle candidates to list in the player's subtitle track selector per language (recommended: 3–5).
+                            </div>
+                        </div>
+
+                        <div class="selectContainer">
+                            <select is="emby-select" id="DefaultTargetFormat" name="DefaultTargetFormat" label="Default Target Subtitle Format">
+                                <option value="srt">SubRip (SRT)</option>
+                                <option value="vtt">WebVTT (VTT)</option>
+                                <option value="ass">Advanced SubStation Alpha (ASS)</option>
+                                <option value="ssa">SubStation Alpha (SSA)</option>
+                                <option value="sub">MicroDVD (SUB)</option>
+                                <option value="ttml">Timed Text Markup Language (TTML / DFXP)</option>
+                            </select>
+                            <div class="fieldDescription">
+                                Target subtitle format used when converting or saving subtitles on the fly.
+                            </div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <input is="emby-input" type="text" id="EnabledVirtualFormats" name="EnabledVirtualFormats" label="Enabled Virtual Output Formats (comma-separated)" />
+                            <div class="fieldDescription">
+                                Formats exposed by Submarine's on-the-fly conversion engine (e.g., <code>srt,vtt,ass,ssa,sub,ttml</code>).
+                            </div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <input is="emby-input" type="number" id="SearchTimeoutSeconds" name="SearchTimeoutSeconds" min="2" max="30" label="Remote Provider Search Timeout (seconds)" />
+                            <div class="fieldDescription">
+                                Maximum time to wait for remote subtitle providers before returning playback info.
+                            </div>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input id="IncludeHearingImpaired" name="IncludeHearingImpaired" type="checkbox" is="emby-checkbox" />
+                                <span>Include Hearing Impaired (CC / SDH) Subtitles</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Include subtitles tagged for hearing-impaired viewers in virtual streams and search results.
+                            </div>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input id="PersistDownloadedSubtitlesToLibrary" name="PersistDownloadedSubtitlesToLibrary" type="checkbox" is="emby-checkbox" />
+                                <span>Persist Streamed Subtitles Permanently to Media Library</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Automatically saves a copy of any streamed or downloaded on-demand subtitle alongside the media item for future offline playback.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span>Save Configuration</span>
+                        </button>
+                    </div>
+                </form>
+
+                <hr style="margin: 2.5em 0; opacity: 0.2;" />
+
+                <div class="verticalSection">
+                    <h3 class="sectionTitle">🧪 Test Multi-Format Subtitle Converter Sandbox</h3>
+                    <p class="fieldDescription">
+                        Test Submarine's built-in subtitle parser, time-shift engine, and format converter directly using <code>POST /Plugins/Submarine/Convert</code>.
+                    </p>
+
+                    <div class="selectContainer">
+                        <select is="emby-select" id="SandboxTargetFormat" label="Convert To Target Format">
+                            <option value="vtt">WebVTT (.vtt)</option>
+                            <option value="srt">SubRip (.srt)</option>
+                            <option value="ass">Advanced SubStation Alpha (.ass)</option>
+                            <option value="ssa">SubStation Alpha (.ssa)</option>
+                            <option value="sub">MicroDVD (.sub)</option>
+                            <option value="ttml">TTML / DFXP (.ttml)</option>
+                        </select>
+                    </div>
+
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="SandboxOffsetMs" value="0" label="Timing Offset (milliseconds, e.g. +500 or -500)" />
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="SandboxInputContent">Source Subtitle Content (SRT / VTT / ASS / SSA / SUB / TTML)</label>
+                        <textarea id="SandboxInputContent" rows="6" style="width:100%; font-family:monospace; background:#141821; color:#e5e9f0; border:1px solid #333; border-radius:6px; padding:10px;">1
+00:00:01,000 --> 00:00:04,250
+Welcome to Submarine on-demand subtitles!
+
+2
+00:00:05,000 --> 00:00:08,500
+Real-time conversion between SRT, VTT, ASS, SSA, SUB, and TTML.</textarea>
+                    </div>
+
+                    <button is="emby-button" type="button" id="SandboxConvertBtn" class="raised button-alt emby-button">
+                        <span>Convert Subtitle Now</span>
+                    </button>
+
+                    <div class="inputContainer" style="margin-top: 1em;">
+                        <label class="inputLabel" for="SandboxOutputContent">Converted Output</label>
+                        <textarea id="SandboxOutputContent" rows="7" readonly style="width:100%; font-family:monospace; background:#0d1017; color:#7bed9f; border:1px solid #333; border-radius:6px; padding:10px;" placeholder="Converted subtitle output will appear here..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var SubmarineConfig = {
+                pluginUniqueId: '8b6a2e4c-9f1d-4e3a-b8c7-1d2e3f4a5b6c'
+            };
+
+            document.querySelector('#SubmarineConfigPage').addEventListener('pageshow', function () {
+                Dashboard.showLoadingMsg();
+                var page = this;
+
+                ApiClient.getPluginConfiguration(SubmarineConfig.pluginUniqueId).then(function (config) {
+                    page.querySelector('#EnableUniversalVirtualStreams').checked = config.EnableUniversalVirtualStreams !== false;
+                    page.querySelector('#EnableWebPlayerModal').checked = config.EnableWebPlayerModal !== false;
+                    page.querySelector('#PreferredLanguages').value = config.PreferredLanguages || 'eng';
+                    page.querySelector('#MaxVirtualStreamsPerLanguage').value = config.MaxVirtualStreamsPerLanguage || 3;
+                    page.querySelector('#DefaultTargetFormat').value = config.DefaultTargetFormat || 'srt';
+                    page.querySelector('#EnabledVirtualFormats').value = config.EnabledVirtualFormats || 'srt,vtt,ass,ssa,sub,ttml';
+                    page.querySelector('#SearchTimeoutSeconds').value = config.SearchTimeoutSeconds || 8;
+                    page.querySelector('#IncludeHearingImpaired').checked = config.IncludeHearingImpaired !== false;
+                    page.querySelector('#PersistDownloadedSubtitlesToLibrary').checked = config.PersistDownloadedSubtitlesToLibrary !== false;
+                    Dashboard.hideLoadingMsg();
+                }).catch(function () {
+                    Dashboard.hideLoadingMsg();
+                });
+            });
+
+            document.querySelector('#SubmarineConfigForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                Dashboard.showLoadingMsg();
+                var page = document.querySelector('#SubmarineConfigPage');
+
+                ApiClient.getPluginConfiguration(SubmarineConfig.pluginUniqueId).then(function (config) {
+                    config.EnableUniversalVirtualStreams = page.querySelector('#EnableUniversalVirtualStreams').checked;
+                    config.EnableWebPlayerModal = page.querySelector('#EnableWebPlayerModal').checked;
+                    config.PreferredLanguages = page.querySelector('#PreferredLanguages').value;
+                    config.MaxVirtualStreamsPerLanguage = parseInt(page.querySelector('#MaxVirtualStreamsPerLanguage').value, 10) || 3;
+                    config.DefaultTargetFormat = page.querySelector('#DefaultTargetFormat').value;
+                    config.EnabledVirtualFormats = page.querySelector('#EnabledVirtualFormats').value;
+                    config.SearchTimeoutSeconds = parseInt(page.querySelector('#SearchTimeoutSeconds').value, 10) || 8;
+                    config.IncludeHearingImpaired = page.querySelector('#IncludeHearingImpaired').checked;
+                    config.PersistDownloadedSubtitlesToLibrary = page.querySelector('#PersistDownloadedSubtitlesToLibrary').checked;
+
+                    ApiClient.updatePluginConfiguration(SubmarineConfig.pluginUniqueId, config).then(function (result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                    });
+                });
+
+                return false;
+            });
+
+            document.querySelector('#SandboxConvertBtn').addEventListener('click', function () {
+                var page = document.querySelector('#SubmarineConfigPage');
+                var content = page.querySelector('#SandboxInputContent').value;
+                var targetFormat = page.querySelector('#SandboxTargetFormat').value;
+                var offsetMs = parseInt(page.querySelector('#SandboxOffsetMs').value, 10) || 0;
+                var outputEl = page.querySelector('#SandboxOutputContent');
+
+                outputEl.value = 'Converting...';
+
+                var url = ApiClient.getUrl('Plugins/Submarine/Convert');
+                ApiClient.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: JSON.stringify({
+                        Content: content,
+                        TargetFormat: targetFormat,
+                        OffsetMs: offsetMs
+                    }),
+                    contentType: 'application/json',
+                    dataType: 'json'
+                }).then(function (res) {
+                    outputEl.value = (res && res.ConvertedContent) ? res.ConvertedContent : JSON.stringify(res, null, 2);
+                }).catch(function (err) {
+                    outputEl.value = 'Error converting subtitle: ' + (err && err.statusText ? err.statusText : err);
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

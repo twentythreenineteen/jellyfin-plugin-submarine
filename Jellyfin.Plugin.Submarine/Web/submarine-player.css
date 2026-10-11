@@ -1,0 +1,408 @@
+/* Submarine Plex-Style In-Player Subtitle Search & Download Overlay */
+#submarine-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(8, 11, 18, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: #f3f6fa;
+}
+
+#submarine-modal-backdrop.submarine-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.submarine-modal {
+    width: 100%;
+    max-width: 780px;
+    max-height: 86vh;
+    background: linear-gradient(165deg, rgba(22, 27, 38, 0.97) 0%, rgba(13, 17, 25, 0.99) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(0, 164, 220, 0.18);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(12px) scale(0.985);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#submarine-modal-backdrop.submarine-visible .submarine-modal {
+    transform: translateY(0) scale(1);
+}
+
+.submarine-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.submarine-modal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.submarine-logo-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #00a4dc 0%, #e5a00d 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(0, 164, 220, 0.35);
+}
+
+.submarine-modal-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #ffffff;
+}
+
+.submarine-modal-subtitle {
+    margin: 2px 0 0;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.submarine-close-btn {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #d8dee9;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.submarine-close-btn:hover,
+.submarine-close-btn:focus-visible {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    outline: 2px solid #00a4dc;
+}
+
+.submarine-search-bar {
+    padding: 16px 24px;
+    background: rgba(0, 0, 0, 0.22);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.submarine-search-row {
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.submarine-input,
+.submarine-select {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 9px;
+    color: #ffffff;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.submarine-select option {
+    background: #161b26;
+    color: #ffffff;
+}
+
+.submarine-input:focus,
+.submarine-select:focus {
+    border-color: #00a4dc;
+    background: rgba(255, 255, 255, 0.11);
+}
+
+.submarine-btn-primary {
+    background: linear-gradient(135deg, #00a4dc 0%, #0077b5 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 9px;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: transform 0.12s ease, filter 0.15s ease;
+}
+
+.submarine-btn-primary:hover,
+.submarine-btn-primary:focus-visible {
+    filter: brightness(1.12);
+    outline: 2px solid #e5a00d;
+}
+
+.submarine-btn-primary:active {
+    transform: scale(0.98);
+}
+
+.submarine-options-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.submarine-format-pills {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.submarine-format-label {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.55);
+    margin-right: 4px;
+}
+
+.submarine-format-pill {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.78);
+    border-radius: 999px;
+    padding: 4px 11px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.submarine-format-pill.active,
+.submarine-format-pill:hover {
+    background: rgba(0, 164, 220, 0.24);
+    border-color: #00a4dc;
+    color: #ffffff;
+}
+
+.submarine-sync-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.submarine-offset-input {
+    width: 82px;
+    padding: 5px 8px;
+    font-size: 0.82rem;
+    text-align: right;
+}
+
+.submarine-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.submarine-results-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 240px;
+    max-height: 460px;
+}
+
+.submarine-result-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.submarine-result-item:hover,
+.submarine-result-item:focus-visible {
+    background: rgba(0, 164, 220, 0.14);
+    border-color: rgba(0, 164, 220, 0.55);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.submarine-result-main {
+    min-width: 0;
+    flex: 1;
+}
+
+.submarine-result-name {
+    font-size: 0.94rem;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 6px;
+}
+
+.submarine-result-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.submarine-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.71rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: rgba(255, 255, 255, 0.09);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.submarine-badge-provider {
+    background: rgba(0, 164, 220, 0.22);
+    color: #6bd5ff;
+    border: 1px solid rgba(0, 164, 220, 0.35);
+}
+
+.submarine-badge-hash {
+    background: rgba(229, 160, 13, 0.22);
+    color: #ffd166;
+    border: 1px solid rgba(229, 160, 13, 0.42);
+}
+
+.submarine-badge-hi {
+    background: rgba(155, 89, 182, 0.24);
+    color: #e0b0ff;
+}
+
+.submarine-badge-format {
+    background: rgba(46, 204, 113, 0.2);
+    color: #7bed9f;
+    text-transform: uppercase;
+}
+
+.submarine-result-action {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 8px 13px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+}
+
+.submarine-result-item:hover .submarine-result-action {
+    background: #00a4dc;
+    border-color: #00a4dc;
+}
+
+.submarine-empty-state {
+    text-align: center;
+    padding: 44px 20px;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.92rem;
+}
+
+.submarine-osd-btn {
+    color: inherit;
+    position: relative;
+}
+
+.submarine-menu-action-btn {
+    width: 100%;
+    text-align: left;
+    padding: 12px 18px;
+    background: linear-gradient(90deg, rgba(0, 164, 220, 0.22) 0%, rgba(229, 160, 13, 0.15) 100%);
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.92rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.submarine-menu-action-btn:hover,
+.submarine-menu-action-btn:focus-visible {
+    background: linear-gradient(90deg, rgba(0, 164, 220, 0.38) 0%, rgba(229, 160, 13, 0.25) 100%);
+    outline: none;
+}
+
+.submarine-toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 100000;
+    background: rgba(18, 24, 36, 0.96);
+    border: 1px solid rgba(0, 164, 220, 0.55);
+    border-radius: 10px;
+    padding: 12px 18px;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 500;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.submarine-toast.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+    .submarine-search-row {
+        grid-template-columns: 1fr;
+    }
+
+    .submarine-modal {
+        max-height: 92vh;
+    }
+}
